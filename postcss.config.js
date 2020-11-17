@@ -1,15 +1,7 @@
+// postcss.config.js
+const autoprefixer = require("autoprefixer")();
+const tailwindcss = require("tailwindcss")("./tailwind.js");
+
 module.exports = {
-  future: {
-    // removeDeprecatedGapUtilities: true,
-    // purgeLayersByDefault: true,
-  },
-  purge: [],
-  theme: {
-    extend: {},
-  },
-  variants: {},
-  plugins: [
-    require('tailwindcss')('tailwind.js'),
-    require('autoprefixer')(),
-  ],
-}
+  plugins: [tailwindcss, autoprefixer]
+};
