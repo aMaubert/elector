@@ -16,8 +16,22 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
+import {pollService} from "@/services";
+
 export default defineComponent({
-  name: 'Menu'
+  name: 'Menu',
+  setup() {
+    const connectWeb3 = async () => {
+      try {
+        const result = await pollService.pingTest();
+        console.log({result});
+      } catch (e) {
+        console.log({error: e});
+      }
+    }
+
+    connectWeb3();
+  }
 })
 </script>
 

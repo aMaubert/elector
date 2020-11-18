@@ -17,13 +17,26 @@
 
 <script lang="ts">
 
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue';
+import {pollService} from '@/services';
 
 export default defineComponent({
   name: 'Header',
   setup () {
     const isOpen = ref(false);
     const menuLabel = ref('AM');
+
+    const connectWeb3 = async () => {
+      try {
+        const result = await pollService.pingTest();
+        console.log({result});
+      } catch (e) {
+        console.log({error: e});
+      }
+    }
+
+    connectWeb3();
+
 
     return {
       isOpen,

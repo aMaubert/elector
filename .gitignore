@@ -23,3 +23,7 @@ pnpm-debug.log*
 *.sw?
 
 *.eslintrc.js
+
+
+src/abi/*.json
+
