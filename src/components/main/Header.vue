@@ -22,8 +22,8 @@ import { defineComponent, ref } from 'vue'
 export default defineComponent({
   name: 'Header',
   setup () {
-    const isOpen = ref(false)
-    const menuLabel = ref('AM')
+    const isOpen = ref(false);
+    const menuLabel = ref('AM');
 
     return {
       isOpen,

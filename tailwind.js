@@ -1,7 +1,7 @@
 module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
+    purgeLayersByDefault: true
   },
   purge: [],
   theme: {
@@ -10,10 +10,10 @@ module.exports = {
         primary: '#408ec6',
         secondary: '#7a2048',
         tertiary: '#1e2761',
-        secondary_hover: '#009999'
-      },
-    },
+        secondaryHover: '#009999'
+      }
+    }
   },
   variants: {},
-  plugins: [],
+  plugins: []
 }
