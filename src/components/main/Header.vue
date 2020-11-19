@@ -8,8 +8,11 @@
       </button>
       <button v-if="isOpen" @click="isOpen = false" class="h-full w-full fixed inset-0 cursor-default"></button>
       <div v-if="isOpen" class="absolute w-32 bg-white rounded-lg shadow-lg py-2 mt-16">
-        <a href="#" class="block px-4 py-2 account-link hover:text-white">Account</a>
-        <a href="#" class="block px-4 py-2 account-link hover:text-white">Support</a>
+        <router-link :to="`/account/${menuLabel}`"
+                     class="block px-4 py-2 account-link hover:bg-primary hover:text-white" >
+          Account
+        </router-link>
+        <a href="#" class="block px-4 py-2 account-link hover:bg-primary hover:text-white">Support</a>
       </div>
     </div>
   </header>
@@ -17,33 +20,33 @@
 
 <script lang="ts">
 
-import {defineComponent, ref} from 'vue';
-import {pollService} from '@/services';
+  import {defineComponent, ref} from 'vue';
+  import {pollService} from '@/services';
 
-export default defineComponent({
-  name: 'Header',
-  setup () {
-    const isOpen = ref(false);
-    const menuLabel = ref('AM');
+  export default defineComponent({
+    name: 'Header',
+    setup () {
+      const isOpen = ref(false);
+      const menuLabel = ref('');
 
-    const connectWeb3 = async () => {
-      try {
-        const result = await pollService.pingTest();
-        console.log({result});
-      } catch (e) {
-        console.log({error: e});
+      const connectWeb3 = async () => {
+        try {
+          const result = await pollService.pingTest();
+          const accounts = await pollService.getAccounts();
+          menuLabel.value = accounts[0];
+        } catch (e) {
+          console.log({error: e});
+        }
+      }
+
+      connectWeb3();
+
+      return {
+        isOpen,
+        menuLabel
       }
     }
-
-    connectWeb3();
-
-
-    return {
-      isOpen,
-      menuLabel
-    }
-  }
-})
+  })
 </script>
 
 <style scoped>

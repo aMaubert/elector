@@ -15,24 +15,11 @@
 
 <script lang="ts">
 
-import { defineComponent } from 'vue'
-import {pollService} from "@/services";
+  import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'Menu',
-  setup() {
-    const connectWeb3 = async () => {
-      try {
-        const result = await pollService.pingTest();
-        console.log({result});
-      } catch (e) {
-        console.log({error: e});
-      }
-    }
-
-    connectWeb3();
-  }
-})
+  export default defineComponent({
+    name: 'Menu'
+  })
 </script>
 
 <style scoped>

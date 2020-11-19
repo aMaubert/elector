@@ -6,10 +6,11 @@
 
 <script lang="ts">
 
-import { defineComponent } from 'vue'
-export default defineComponent({
-  name: 'Elections'
-})
+  import { defineComponent } from 'vue';
+
+  export default defineComponent({
+    name: 'Elections'
+  })
 </script>
 
 <style scoped>
