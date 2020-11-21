@@ -7,6 +7,9 @@
       <p class="px-4 py-3 mb-8 text-sm text-gray-600 dark:text-gray-400">
         <slot />
       </p>
+      <div class=" border-t border-gray-200 ">
+        <slot name="footer" />
+      </div>
     </div>
   </div>
 </template>

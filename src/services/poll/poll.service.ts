@@ -1,6 +1,6 @@
 import { Contract } from 'web3-eth-contract';
 import abi from '@/abi/Poll.json';
-import {IPollService} from '@/definitions';
+import {ElectionState, IElection, IPollService} from '@/definitions';
 import {EthereumService} from '@/services/poll/ethereum.service';
 
 //TODO add inverse of control to load the services in a containerManager before launch the front server
@@ -23,6 +23,39 @@ class PollService extends EthereumService implements IPollService {
     return pollContract.methods.pingTest().call() as string;
   }
 
+  public async fetchAllElections(): Promise<IElection[]> {
+    const election1 = {
+      name : 'election 1',
+      state: ElectionState.Vote,
+      candidates: [
+        {address: '0x123434567823456728', firstName: 'Paul', lastName: 'pote'},
+        {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
+        {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
+        ],
+    } as IElection;
+
+    const election2 = {
+      name : 'election 2',
+      state: ElectionState.Applications,
+      candidates: [
+        {address: '0x123434567823456728', firstName: 'Paul', lastName: 'pote'},
+        {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
+        {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
+      ],
+    } as IElection;
+
+    const election3 = {
+      name : 'election 3',
+      state: ElectionState.Finished,
+      candidates: [
+        {address: '0x123434567823456728', firstName: 'Paul', lastName: 'pote'},
+        {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
+        {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
+      ],
+    } as IElection;
+
+    return [election1, election2, election3];
+  }
 }
 
 export const pollService = new PollService();
