@@ -1,6 +1,13 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import {State} from "@/store";
+
 
 const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/Login.vue')
+  },
   {
     path: '/elections',
     name: 'election-list',
@@ -40,10 +47,16 @@ const router = createRouter({
 
 //Add Guard here
 router.beforeEach((to, from, next) => {
-  if( to.path === '/' ) {
-    return next({ name : 'election-list'});
+  const userState = localStorage.getItem('userState');
+  if(to.path === '/' || !userState) {
+    return next({ name : 'login'});
+  }
+  const state = JSON.parse(userState) as State;
+  if( !state || !state.user || !state.user)  {
+    return next({ name : 'login'});
   }
   next();
+
 });
 
 export default router
