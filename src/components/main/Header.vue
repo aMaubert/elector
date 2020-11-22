@@ -3,7 +3,7 @@
     <div class="w-1/2"></div>
     <div class="relative w-1/2 flex justify-end">
       <button @click="isOpen = !isOpen"
-              class="relative z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-primary hover:border-gray-300 focus:border-gray-300 focus:outline-none">
+              class="relative z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-primary hover:border-white focus:border-gray-300 focus:outline-none">
         {{menuLabel}}
       </button>
       <button v-if="isOpen" @click="isOpen = false" class="h-full w-full fixed inset-0 cursor-default"></button>

@@ -12,6 +12,21 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/election/Create.vue')
   },
   {
+    path: '/elections/:name/candidate/create',
+    name: 'election-add-candidate',
+    component: () => import('../views/election/AddCandidate.vue')
+  },
+  {
+    path: '/elections/:name/vote',
+    name: 'election-vote',
+    component: () => import('../views/election/Vote.vue')
+  },
+  {
+    path: '/elections/:name/stats',
+    name: 'election-stats',
+    component: () => import('../views/election/Stats.vue')
+  },
+  {
     path: '/account/:id',
     name: 'account-form',
     component: () => import('../views/Account.vue')

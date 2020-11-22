@@ -1,7 +1,11 @@
 import { Contract } from 'web3-eth-contract';
 import abi from '@/abi/Poll.json';
-import {ElectionState, IElection, IPollService} from '@/definitions';
+import {ElectionState, EthereumAddress, ICandidate, IElection, IPollService} from '@/definitions';
 import {EthereumService} from '@/services/poll/ethereum.service';
+import {mockElections} from "@/services/poll/mock";
+
+
+let elections = mockElections;
 
 //TODO add inverse of control to load the services in a containerManager before launch the front server
 //TODO only this can have a real singleton pattern for this service
@@ -24,37 +28,23 @@ class PollService extends EthereumService implements IPollService {
   }
 
   public async fetchAllElections(): Promise<IElection[]> {
-    const election1 = {
-      name : 'election 1',
-      state: ElectionState.Vote,
-      candidates: [
-        {address: '0x123434567823456728', firstName: 'Paul', lastName: 'pote'},
-        {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
-        {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
-        ],
-    } as IElection;
+    return elections;
+  }
 
-    const election2 = {
-      name : 'election 2',
-      state: ElectionState.Applications,
-      candidates: [
-        {address: '0x123434567823456728', firstName: 'Paul', lastName: 'pote'},
-        {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
-        {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
-      ],
-    } as IElection;
+  public async fetchElectionByName(name: string): Promise<IElection | undefined> {
+    return elections.find((election: IElection) => election.name === name);
+  }
 
-    const election3 = {
-      name : 'election 3',
-      state: ElectionState.Finished,
-      candidates: [
-        {address: '0x123434567823456728', firstName: 'Paul', lastName: 'pote'},
-        {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
-        {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
-      ],
-    } as IElection;
-
-    return [election1, election2, election3];
+  public async createCandidate(electionName: EthereumAddress, firstName: string, lastName: string): Promise<boolean> {
+    const electionFound = elections.find((election: IElection) => election.name === electionName);
+    if(!electionFound) return false;
+    for( let i = 0; i < elections.length; i++ ) {
+      if(elections[i].name === electionName) {
+        elections[i].candidates.push({ address: firstName, firstName, lastName} as ICandidate);
+        return true;
+      }
+    }
+    return false;
   }
 }
 

@@ -10,10 +10,9 @@
       <div class="w-3/6" />
       <div class="h-1/2 m-auto ml-max w-1/6">
         <button class="bg-primary rounded-md font-bold py-2 px-4 text-gray-100 hover:bg-gray-200 hover:text-primary ">
-          <router-link :to="{name : 'election-create'}">
+          <router-link :to="{name : 'election-create'}" >
             Créer une Election
           </router-link>
-
         </button>
       </div>
     </div>
@@ -34,18 +33,21 @@
             {{election[column]}}
           </TableBodyItem>
           <TableBodyItem>
-            <button class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                    v-if="isApplicationState(election)">
+            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
+                         v-if="isApplicationState(election)"
+                         :to="`/elections/${election.name}/candidate/create`">
               <i class="fas fa-user-plus"></i>
-            </button>
-            <button class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                    v-if="isVoteState(election)">
+            </router-link>
+            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
+                    v-if="isVoteState(election)"
+                    :to="`/elections/${election.name}/vote`">
               <i class="fas fa-person-booth"></i>
-            </button>
-            <button class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                    v-if="isFinishedState(election) || connectedUserHasVoted">
+            </router-link>
+            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
+                         v-if="isFinishedState(election) || connectedUserHasVoted"
+                         :to="`/elections/${election.name}/stats`">
               <i class="fas fa-chart-line"></i>
-            </button>
+            </router-link>
           </TableBodyItem>
         </tr>
       </template>
