@@ -32,6 +32,7 @@ const store = createStore<State>({
   actions: {
     async fetchConnectedUser({commit}) {
       const accounts =  await pollService.getAccounts();
+      console.log({accounts});
       const user = {address: accounts[0] } as IAccount;
       commit(MutationType.SET_USER, user);
     }

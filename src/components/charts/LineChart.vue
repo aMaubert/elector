@@ -1,0 +1,47 @@
+<template>
+  <div v-if="computeChartDate"
+       class="w-full h-full"
+       ref="divChart" />
+</template>
+<script >
+
+  import {chart} from  'jscharting';
+
+  export default {
+    name: 'LineChart',
+    props: {
+      chartData: {
+        type: Array,
+        required: true
+      },
+      title: {
+        type: String,
+        default: () => ''
+      }
+    },
+    computed: {
+      computeChartDate() {
+        if(this.chartData.length > 0) {
+          chart(this.$refs['divChart'], {
+            defaultCultureName: 'fr-FR',
+            title: { label: { text: this.title } },
+            type: 'column Overflow', //https://jscharting.com/documentation/#node=Home.API.json.Enums.chartType
+            series: [
+              {
+                points: this.chartData,
+                animation: true,
+                palette: ["#0085f4", "#fE4C14", "#DBCB18", "#15AC20", "#327fa8", "#4832a8", "#8b32a8", "#a83279"]//"autumn"
+              }
+            ]
+          });
+        }
+        return this.chartData;
+
+      }
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>

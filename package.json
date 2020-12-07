@@ -12,6 +12,7 @@
     "core-js": "^3.6.5",
     "dotenv": "^8.2.0",
     "gulp": "^4.0.2",
+    "jscharting": "^3.0.1",
     "tailwindcss": "^1.9.6",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",

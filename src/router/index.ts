@@ -4,6 +4,16 @@ import {State} from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/',
+    name: 'home',
+    redirect: to => '/elections'
+  },
+  {
+    path: '/not-connected',
+    name: 'not-connected',
+    component:  () => import('../views/401.vue')
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('../views/Login.vue')

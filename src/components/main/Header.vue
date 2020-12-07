@@ -21,19 +21,24 @@
 <script lang="ts">
 
   import {defineComponent, ref, computed} from 'vue';
-  import {useStore} from 'vuex';
-  import {GetterType} from "@/store";
-  import {IAccount} from "@/definitions/models/account.model";
+  import {IAccount} from '@/definitions/models/account.model';
 
   export default defineComponent({
     name: 'Header',
-    setup () {
-      const store = useStore();
+    props: {
+      user: {
+        type: Object,
+        required: true
+      }
+    },
+    setup (props) {
       const isOpen = ref(false);
 
 
-      const user = computed<IAccount>( () => store.getters[GetterType.GET_USER] as IAccount);
+      const user = computed<IAccount>( () => props.user as IAccount);
       const userLabel = computed<string>( () => user.value.address.slice(0,4));
+
+
       return {
         isOpen,
         user,

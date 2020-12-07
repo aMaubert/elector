@@ -8,6 +8,7 @@ const election1 = {
     {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
     {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
   ],
+  votes: []
 } as IElection;
 
 const election2 = {
@@ -18,6 +19,7 @@ const election2 = {
     {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
     {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
   ],
+  votes: []
 } as IElection;
 
 
@@ -29,6 +31,7 @@ const election3 = {
     {address: '0x084939874893795724', firstName: 'Michel', lastName: 'Obama'},
     {address: '0x048394820980449890', firstName: 'Jackie', lastName: 'Le Rookie'},
   ],
+  votes: []
 } as IElection;
 
 export const mockElections = [election1, election2, election3];

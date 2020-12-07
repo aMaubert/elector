@@ -1,26 +1,48 @@
 <template>
-  <div class="flex">
+  <div class="flex"
+       v-if="connectedUser">
     <Menu/>
     <div class="w-full flex flex-col h-screen overflow-y-auto">
-      <Header/>
+      <Header
+              :user="connectedUser"/>
       <div class="main-content flex-1 mt-12 md:mt-2 pb-24 md:pb-5">
         <router-view/>
       </div>
     </div>
   </div>
+  <NotConnected v-else/>
 </template>
 
 <script lang="ts">
 
-import { defineComponent } from 'vue'
+import {computed, defineComponent} from 'vue'
 import Menu from '@/components/main/Menu.vue'
 import Header from '@/components/main/Header.vue'
+import NotConnected from '@/views/401.vue';
+import {useStore} from "vuex";
+import {ActionType, GetterType} from "@/store";
+import {IAccount} from "@/definitions/models/account.model";
+import {useRouter} from "vue-router";
 
 export default defineComponent({
   name: 'App',
   components: {
     Menu,
-    Header
+    Header,
+    NotConnected
+  },
+  setup() {
+    const {getters, dispatch} = useStore();
+    const connectedUser = computed<IAccount>( () => getters[GetterType.GET_USER] as IAccount);
+
+    if(!connectedUser.value) {
+       dispatch(ActionType.FETCH_CONNECTED_USER);
+    }
+
+    return {
+      connectedUser
+    };
+
   }
 })
 

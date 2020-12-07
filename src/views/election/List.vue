@@ -33,13 +33,19 @@
             {{election[column]}}
           </TableBodyItem>
           <TableBodyItem>
+<!--            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"-->
+<!--                         v-if="isApplicationState(election)"-->
+<!--                         :to="`/elections/${election.name}/candidate/create`">-->
+<!--              <i class="fas fa-user-plus"></i>-->
+<!--            </router-link>-->
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                         v-if="isApplicationState(election)"
                          :to="`/elections/${election.name}/candidate/create`">
               <i class="fas fa-user-plus"></i>
             </router-link>
+<!--            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"-->
+<!--                    v-if="isVoteState(election)"-->
+<!--                    :to="`/elections/${election.name}/vote`">-->
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                    v-if="isVoteState(election)"
                     :to="`/elections/${election.name}/vote`">
               <i class="fas fa-person-booth"></i>
             </router-link>
