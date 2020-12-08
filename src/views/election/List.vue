@@ -27,10 +27,22 @@
         </TableHeaderItem>
       </template>
       <template #table-body>
-        <tr v-for="election of elections"
-            class=" divide-x-2 divide-primary border-b border-gray-400">
+        <tr class=" divide-x-2 divide-primary border-b border-gray-400"
+            v-for="election of computedElections"
+            :key="election.name" >
           <TableBodyItem v-for="column of columns">
             {{election[column]}}
+
+            <template v-if="column === 'state'">
+              <template v-if="election.state === ElectionStateEnum.Applications || election.state === ElectionStateEnum.Vote">
+
+                <button class="w-full px-2 m-right text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
+                        @click="electionNextStep(election.name)">
+                  Next Step
+                </button>
+              </template>
+            </template>
+
           </TableBodyItem>
           <TableBodyItem>
 <!--            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"-->
@@ -50,7 +62,7 @@
               <i class="fas fa-person-booth"></i>
             </router-link>
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                         v-if="isFinishedState(election) || connectedUserHasVoted"
+                         v-if="election.state === ElectionStateEnum.Finished || connectedUserHasVoted"
                          :to="`/elections/${election.name}/stats`">
               <i class="fas fa-chart-line"></i>
             </router-link>
@@ -84,26 +96,35 @@ export default defineComponent({
         'name',
         'state'
       ]);
+      const computedElections = computed<IElection[]>(() => {
+        const electionsTmp = elections.value;
+        console.log('compute elections')
+        return electionsTmp;
+      });
+      const ElectionStateEnum = ref<{ [key in ElectionState]: ElectionState }>( Object.freeze(ElectionState) );
 
-      const isApplicationState = (election: IElection): boolean => election.state === ElectionState.Applications ;
-      const isVoteState = (election: IElection): boolean => election.state === ElectionState.Vote ;
-      const isFinishedState = (election: IElection): boolean => election.state === ElectionState.Finished ;
       const connectedUserHasVoted = computed<boolean>( () => false);
 
-
-      const fetAllElections = async () => {
-        elections.value = await pollService.fetchAllElections();
+      const electionNextStep = async (electionName: string) => {
+        const nextStepSucceed = await pollService.nextStep(electionName);
+        if(nextStepSucceed) {
+          elections.value = await pollService.fetchAllElections();
+        }
       };
 
-      fetAllElections();
+      const fetchAllElections = async () => {
+        elections.value = await pollService.fetchAllElections();
+        console.log({computedElections: computedElections.value});
+      };
+
+      fetchAllElections();
 
       return {
-        elections,
+        computedElections,
         columns,
-        isApplicationState,
-        isVoteState,
         connectedUserHasVoted,
-        isFinishedState
+        electionNextStep,
+        ElectionStateEnum
       };
     }
   })

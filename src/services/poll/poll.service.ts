@@ -1,4 +1,4 @@
-import { Contract } from 'web3-eth-contract';
+import {Contract} from 'web3-eth-contract';
 import abi from '@/abi/Poll.json';
 import {ElectionState, EthereumAddress, ICandidate, IElection, IPollService, IVote} from '@/definitions';
 import {EthereumService} from '@/services/poll/ethereum.service';
@@ -55,6 +55,30 @@ class PollService extends EthereumService implements IPollService {
       }
     }
     return false;
+  }
+
+  public async createElection(election: IElection): Promise<boolean> {
+    elections.push(election);
+    return true;
+  }
+
+  public async nextStep(electionName: string): Promise<boolean> {
+    const electionFound = elections.find((election: IElection) => election.name === electionName);
+    if(!electionFound) return false;
+    for( let i = 0; i < elections.length; i++ ) {
+      if(elections[i].name === electionName) {
+        if(elections[i].state === ElectionState.Applications) {
+          elections[i].state = ElectionState.Vote;
+          return true;
+        } else if(elections[i].state === ElectionState.Vote) {
+          elections[i].state = ElectionState.Finished;
+          return true;
+        }
+        return false;
+      }
+    }
+    return false;
+
   }
 }
 

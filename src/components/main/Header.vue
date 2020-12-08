@@ -36,7 +36,7 @@
 
 
       const user = computed<IAccount>( () => props.user as IAccount);
-      const userLabel = computed<string>( () => user.value.address.slice(0,4));
+      const userLabel = computed<string>( () => user.value.address ? user.value.address.slice(0,4) : '');
 
 
       return {

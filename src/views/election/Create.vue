@@ -15,13 +15,15 @@
           </label>
           <input class="h-8 m-auto shadow appearance-none border rounded w-full h-min-full text-gray-700 leading-tight focus:outline-none focus:shadow-outlineshadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                  type="text"
-                 id="name" />
+                 id="name"
+                  v-model="name"/>
         </div>
       </div>
       <template #footer>
         <div class="w-full bg-gray-200 flex p-2">
           <div class="w-3/4 " />
-          <button class="w-1/4 bg-green-500 rounded-md font-bold py-2 px-4 text-gray-100 hover:bg-white hover:text-primary ">
+          <button class="w-1/4 bg-green-500 rounded-md font-bold py-2 px-4 text-gray-100 hover:bg-white hover:text-primary "
+                  @click="createElection">
             Creer
           </button>
         </div>
@@ -32,13 +34,34 @@
 
 <script lang="ts">
 
-  import {defineComponent} from 'vue';
-  import Card from "@/components/Card.vue";
+import {defineComponent, ref} from 'vue';
+import Card from "@/components/Card.vue";
+import {pollService} from "@/services";
+import {ElectionState, IElection} from "@/definitions";
+import {useRouter} from "vue-router";
 
-  export default defineComponent({
+export default defineComponent({
     name: 'election-create',
     components: {
       Card
+    },
+    setup() {
+      const router = useRouter();
+      const name = ref<string>('');
+
+      const createElection = async () => {
+        const election  = {name: name.value, state: ElectionState.Applications, votes: [], candidates: []} as IElection;
+        const electionCreated = await pollService.createElection(election);
+        console.log({electionCreated});
+        if(electionCreated) {
+          router.push({name: 'home'});
+        }
+      };
+
+      return {
+        name,
+        createElection
+      };
     }
   })
 </script>

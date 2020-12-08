@@ -34,10 +34,13 @@ export default defineComponent({
   setup() {
     const {getters, dispatch} = useStore();
     const connectedUser = computed<IAccount>( () => getters[GetterType.GET_USER] as IAccount);
+    dispatch(ActionType.FETCH_CONNECTED_USER)
+      .then(()  => {
+        if(Object.keys(connectedUser.value).length === 0) {
+          console.error('USER NOT CONNECTED !!!');
+        }
+      });
 
-    if(!connectedUser.value) {
-       dispatch(ActionType.FETCH_CONNECTED_USER);
-    }
 
     return {
       connectedUser
