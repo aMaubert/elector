@@ -4,6 +4,7 @@ import {IVote} from '@/definitions';
 
 
 export interface IElection {
+  id: number;
   name: string;
   state: ElectionState;
   candidates: ICandidate[];

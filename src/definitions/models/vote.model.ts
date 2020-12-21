@@ -3,5 +3,5 @@ import {INote} from '@/definitions/models/note.model';
 
 export interface IVote {
   voter: EthereumAddress;
-  Note: INote[];
+  ballot: INote[];
 }

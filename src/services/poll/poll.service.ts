@@ -1,8 +1,16 @@
 import {Contract} from 'web3-eth-contract';
 import abi from '@/abi/Poll.json';
-import {ElectionState, EthereumAddress, ICandidate, IElection, IPollService, IVote} from '@/definitions';
+import {
+  ElectionState,
+  EthereumAddress,
+  ICandidate,
+  IElection,
+  IPollService,
+  IVote
+} from '@/definitions';
 import {EthereumService} from '@/services/poll/ethereum.service';
-import {mockElections} from "@/services/poll/mock";
+import {mockElections} from '@/services/poll/mock';
+import {candidateCoderService, electionCoderService, votesCoderService} from '@/services/utils';
 
 
 let elections = mockElections;
@@ -27,39 +35,70 @@ class PollService extends EthereumService implements IPollService {
     return pollContract.methods.pingTest().call() as string;
   }
 
+  private async currentAccount(): Promise<EthereumAddress> {
+    const accounts = await this.getAccounts();
+    return accounts[0];
+  }
+
   public async fetchAllElections(): Promise<IElection[]> {
-    return elections;
+    try{
+      const pollContract = await PollService.getInstance();
+      const currentAccount = await this.currentAccount();
+      const electionsContracts = await pollContract.methods.allElections().call({from: currentAccount});
+      return electionCoderService.decodeList(electionsContracts);
+    } catch (error) {
+      console.error({error});
+      return [];
+    }
   }
 
   public async fetchElectionByName(name: string): Promise<IElection | undefined> {
     return elections.find((election: IElection) => election.name === name);
   }
 
-  public async vote(electionName: EthereumAddress, vote: IVote): Promise<IElection | null> {
-    const electionFound = elections.findIndex((election: IElection) => election.name === electionName);
-    if(!electionFound) return null;
-    //todo implement
-    const election = elections[electionFound] as IElection;
-    election.votes.push(vote);
-    return election;
+  public async vote(electionId: number, vote: IVote): Promise<boolean> {
+    const addresses: string[] = [];
+    const notes : number[] = [];
+    vote.ballot.forEach(each => {
+      addresses.push((each.candidate as ICandidate).address);
+      notes.push(each.value);
+    });
+
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const transaction = await pollContract.methods.addVote(electionId,addresses,  notes).send({from: currentAccount});
+
+    return transaction.status;
+    // const electionFound = elections.findIndex((election: IElection) => election.name === electionName);
+    // if(!electionFound) return null;
+    // //todo implement
+    // const election = elections[electionFound] as IElection;
+    // election.votes.push(vote);
+    // return election;
 
   }
 
-  public async createCandidate(electionName: EthereumAddress, firstName: string, lastName: string): Promise<boolean> {
-    const electionFound = elections.find((election: IElection) => election.name === electionName);
-    if(!electionFound) return false;
-    for( let i = 0; i < elections.length; i++ ) {
-      if(elections[i].name === electionName) {
-        elections[i].candidates.push({ address: firstName, firstName, lastName} as ICandidate);
-        return true;
-      }
-    }
-    return false;
+  public async createCandidate(electionId: number, firstName: string, lastName: string): Promise<boolean> {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const transaction = await pollContract.methods.addCandidate(electionId, lastName, firstName).send({from: currentAccount});
+    console.log({transaction});
+    return transaction.status;
   }
 
-  public async createElection(election: IElection): Promise<boolean> {
-    elections.push(election);
+  public async createElection(electionName: string): Promise<boolean> {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const created = await pollContract.methods.createElection(electionName).send({from : currentAccount});
+    console.log({created});
     return true;
+  }
+
+  public async fetchAllCandidates(electionId: number): Promise<ICandidate[]> {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const candidatesToDecode = await pollContract.methods.allCandidatesByElectionID(electionId).call({from : currentAccount});
+    return candidateCoderService.decodeList(candidatesToDecode);
   }
 
   public async nextStep(electionName: string): Promise<boolean> {
@@ -79,6 +118,13 @@ class PollService extends EthereumService implements IPollService {
     }
     return false;
 
+  }
+
+  public async fetchAllVotes(electionId: number): Promise<IVote[]> {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const votesToDecode = await pollContract.methods.allVotesByElectionID(electionId).call({from : currentAccount});
+    return votesCoderService.decodeList(votesToDecode);
   }
 }
 

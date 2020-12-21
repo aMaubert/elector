@@ -75,25 +75,28 @@
 
       const user = computed<IAccount>( () => getters[GetterType.GET_USER] as IAccount);
 
-      const electionName = computed<EthereumAddress>( () => router.currentRoute.value.params.name as EthereumAddress);
+      const electionId = computed<number>( () => parseInt(router.currentRoute.value.params.id as string) as number);
 
       const mapCandidateToNote = (candidate: ICandidate) => { return {candidate, value: 10} as INote } ;
 
-      const fetchElectionByName = async () => {
-        election.value = await pollService.fetchElectionByName(electionName.value);
+      const electionName = computed<string>(() => election.value !== undefined ? election.value.name : '');
+
+      const fetchElectionById = async () => {
+        const elections = await pollService.fetchAllElections();
+        election.value = elections.find(election => election.id === electionId.value);
+        const candidates = await pollService.fetchAllCandidates(electionId.value);
         if(!election.value) {
           console.error('error');
           return;
         }
-        notes.value = election.value.candidates.map(mapCandidateToNote);
+        notes.value = candidates.map(mapCandidateToNote);
       };
 
-      fetchElectionByName();
-
+      fetchElectionById();
 
       const addVote = async () => {
-        const vote = {voter: user.value.address, Note: notes.value } as IVote;
-        const response = await pollService.vote(electionName.value, vote);
+        const vote = {voter: user.value.address, ballot: notes.value } as IVote;
+        const response = await pollService.vote(electionId.value, vote);
         if(response) {
           router.push({name: 'election-list'});
         }

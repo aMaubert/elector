@@ -58,23 +58,29 @@
     setup() {
 
       const router = useRouter();
-      const electionName = computed<EthereumAddress>( () => router.currentRoute.value.params.name as EthereumAddress);
+      const electionId = computed<number>( () => parseInt(router.currentRoute.value.params.id as string, 10) as number);
       const election = ref<IElection | undefined>(undefined) ;
 
       //Form vars
       const firstName = ref<string>('');
       const lastName = ref<string>('');
 
-      const fetchElectionByName = async () => {
-        election.value = await pollService.fetchElectionByName(electionName.value);
+      const fetchElectionById = async () => {
+        const elections = await pollService.fetchAllElections();
+        election.value = elections.find(election => election.id === electionId.value);
       }
-
-      fetchElectionByName();
 
       const createCandidate = async () => {
-        const isCreated = await pollService.createCandidate( electionName.value, firstName.value, lastName.value );
+        const isCreated = await pollService.createCandidate( electionId.value, firstName.value, lastName.value );
+        if(!isCreated) {
+          //TODO handle Error with a Toast
+          console.error('Error ajout du candidat');
+          return;
+        }
         router.push({name: 'election-list'});
       }
+
+      fetchElectionById();
 
       return {
         election,

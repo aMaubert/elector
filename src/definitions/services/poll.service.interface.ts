@@ -3,6 +3,6 @@ import {IElection} from '@/definitions';
 
 export interface IPollService extends IEthereumService {
   pingTest(): Promise<string>;
-  createElection(election: IElection): Promise<boolean>;
+  createElection(electionName: string): Promise<boolean>;
   nextStep(electionName: string): Promise<boolean>;
 }

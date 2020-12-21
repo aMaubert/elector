@@ -1,6 +1,7 @@
 import {ElectionState, IElection} from "@/definitions";
 
 const election1 = {
+  id: 0,
   name : 'election 1',
   state: ElectionState.Vote,
   candidates: [
@@ -12,6 +13,7 @@ const election1 = {
 } as IElection;
 
 const election2 = {
+  id: 1,
   name : 'election 2',
   state: ElectionState.Applications,
   candidates: [
@@ -24,6 +26,7 @@ const election2 = {
 
 
 const election3 = {
+  id: 2,
   name : 'election 3',
   state: ElectionState.Finished,
   candidates: [

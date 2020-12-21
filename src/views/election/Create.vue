@@ -50,9 +50,7 @@ export default defineComponent({
       const name = ref<string>('');
 
       const createElection = async () => {
-        const election  = {name: name.value, state: ElectionState.Applications, votes: [], candidates: []} as IElection;
-        const electionCreated = await pollService.createElection(election);
-        console.log({electionCreated});
+        const electionCreated = await pollService.createElection(name.value);
         if(electionCreated) {
           router.push({name: 'home'});
         }

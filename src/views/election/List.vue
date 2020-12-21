@@ -29,13 +29,11 @@
       <template #table-body>
         <tr class=" divide-x-2 divide-primary border-b border-gray-400"
             v-for="election of computedElections"
-            :key="election.name" >
+            :key="election.id" >
           <TableBodyItem v-for="column of columns">
             {{election[column]}}
-
             <template v-if="column === 'state'">
               <template v-if="election.state === ElectionStateEnum.Applications || election.state === ElectionStateEnum.Vote">
-
                 <button class="w-full px-2 m-right text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
                         @click="electionNextStep(election.name)">
                   Next Step
@@ -51,21 +49,25 @@
 <!--              <i class="fas fa-user-plus"></i>-->
 <!--            </router-link>-->
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                         :to="`/elections/${election.name}/candidate/create`">
+                         :to="`/elections/${election.id}/candidate/create`">
               <i class="fas fa-user-plus"></i>
             </router-link>
 <!--            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"-->
 <!--                    v-if="isVoteState(election)"-->
 <!--                    :to="`/elections/${election.name}/vote`">-->
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                    :to="`/elections/${election.name}/vote`">
+                    :to="`/elections/${election.id}/vote`">
               <i class="fas fa-person-booth"></i>
             </router-link>
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                         v-if="election.state === ElectionStateEnum.Finished || connectedUserHasVoted"
-                         :to="`/elections/${election.name}/stats`">
+                         :to="`/elections/${election.id}/stats`">
               <i class="fas fa-chart-line"></i>
             </router-link>
+<!--            <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"-->
+<!--                         v-if="election.state === ElectionStateEnum.Finished || connectedUserHasVoted"-->
+<!--                         :to="`/elections/${election.id}/stats`">-->
+<!--              <i class="fas fa-chart-line"></i>-->
+<!--            </router-link>-->
           </TableBodyItem>
         </tr>
       </template>
@@ -115,6 +117,7 @@ export default defineComponent({
       const fetchAllElections = async () => {
         elections.value = await pollService.fetchAllElections();
         console.log({computedElections: computedElections.value});
+
       };
 
       fetchAllElections();
