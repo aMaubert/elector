@@ -101,22 +101,11 @@ class PollService extends EthereumService implements IPollService {
     return candidateCoderService.decodeList(candidatesToDecode);
   }
 
-  public async nextStep(electionName: string): Promise<boolean> {
-    const electionFound = elections.find((election: IElection) => election.name === electionName);
-    if(!electionFound) return false;
-    for( let i = 0; i < elections.length; i++ ) {
-      if(elections[i].name === electionName) {
-        if(elections[i].state === ElectionState.Applications) {
-          elections[i].state = ElectionState.Vote;
-          return true;
-        } else if(elections[i].state === ElectionState.Vote) {
-          elections[i].state = ElectionState.Finished;
-          return true;
-        }
-        return false;
-      }
-    }
-    return false;
+  public async nextStep(electionId: number): Promise<boolean> {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const transaction = await pollContract.methods.nextStep(electionId).send({from : currentAccount});
+    return transaction.status;
 
   }
 

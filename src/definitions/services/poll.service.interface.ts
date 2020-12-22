@@ -4,5 +4,5 @@ import {IElection} from '@/definitions';
 export interface IPollService extends IEthereumService {
   pingTest(): Promise<string>;
   createElection(electionName: string): Promise<boolean>;
-  nextStep(electionName: string): Promise<boolean>;
+  nextStep(electionId: number): Promise<boolean>;
 }
