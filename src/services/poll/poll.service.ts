@@ -116,6 +116,13 @@ class PollService extends EthereumService implements IPollService {
     return votesCoderService.decodeList(votesToDecode);
   }
 
+  public async fetchElectionMsgSenderHasVoted(): Promise<IElection[]> {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const electionsToDecode = await pollContract.methods.fetchElectionMsgSenderHasVoted().call({from: currentAccount});
+    return electionCoderService.decodeList(electionsToDecode);
+  }
+
 }
 
 export const pollService = new PollService();

@@ -52,7 +52,7 @@
               <i class="fas fa-user-plus"></i>
             </router-link>
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                         v-if="ElectionStateEnum.Vote === election.state"
+                         v-if="ElectionStateEnum.Vote === election.state && !userHasAlreadyVoted(election)"
                           :to="`/elections/${election.id}/vote`">
               <i class="fas fa-person-booth"></i>
             </router-link>
@@ -90,6 +90,7 @@ export default defineComponent({
     },
     setup() {
       const elections = ref<IElection[]>([]);
+      const electionUserHasAlreadyVoted = ref<IElection[]>([]);
       const {getters} = useStore();
 
       const columns = ref<string[]>([
@@ -115,8 +116,6 @@ export default defineComponent({
         }
       };
 
-
-
       const userIsNotAlreadyCandidate = (election: IElection): boolean => {
         return !election.candidates.some(candidate => candidate.address === connectedUser.value.address);
       }
@@ -126,9 +125,15 @@ export default defineComponent({
         for(let i = 0; i < elections.value.length; i++) {
           elections.value[i].candidates = await pollService.fetchAllCandidates(elections.value[i].id);
         }
+
+        electionUserHasAlreadyVoted.value = await pollService.fetchElectionMsgSenderHasVoted();
       };
 
       fetchAllElections();
+
+      const userHasAlreadyVoted = (election: IElection): boolean => {
+        return electionUserHasAlreadyVoted.value.some(eachElectionAlreadyVoted => eachElectionAlreadyVoted.id === election.id );
+      }
 
       return {
         computedElections,
@@ -136,7 +141,8 @@ export default defineComponent({
         connectedUserHasVoted,
         electionNextStep,
         ElectionStateEnum,
-        userIsNotAlreadyCandidate
+        userIsNotAlreadyCandidate,
+        userHasAlreadyVoted
       };
     }
   })
