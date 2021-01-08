@@ -47,7 +47,7 @@
           </TableBodyItem>
           <TableBodyItem>
             <router-link class="px-2 text-primary bg-white rounded-full mx-2 hover:bg-primary hover:text-white"
-                         v-if="ElectionStateEnum.Applications === election.state"
+                         v-if="ElectionStateEnum.Applications === election.state && userIsNotAlreadyCandidate(election)"
                          :to="`/elections/${election.id}/candidate/create`">
               <i class="fas fa-user-plus"></i>
             </router-link>
@@ -77,6 +77,9 @@ import {pollService} from "@/services";
 import Table from "@/components/table/Table.vue";
 import TableHeaderItem from "@/components/table/TableHeaderItem.vue";
 import TableBodyItem from "@/components/table/TableBodyItem.vue";
+import {IAccount} from "@/definitions/models/account.model";
+import {GetterType} from "@/store";
+import {useStore} from "vuex";
 
 export default defineComponent({
     name: 'Election-list',
@@ -87,15 +90,16 @@ export default defineComponent({
     },
     setup() {
       const elections = ref<IElection[]>([]);
+      const {getters} = useStore();
+
       const columns = ref<string[]>([
         'name',
         'state'
       ]);
-      const computedElections = computed<IElection[]>(() => {
-        const electionsTmp = elections.value;
-        console.log('compute elections')
-        return electionsTmp;
-      });
+
+      const connectedUser = computed<IAccount>( () => getters[GetterType.GET_USER] as IAccount);
+
+      const computedElections = computed<IElection[]>(() => elections.value);
       const ElectionStateEnum = ref<{ [key in ElectionState]: ElectionState }>( Object.freeze(ElectionState) );
 
       const connectedUserHasVoted = computed<boolean>( () => false);
@@ -111,10 +115,17 @@ export default defineComponent({
         }
       };
 
+
+
+      const userIsNotAlreadyCandidate = (election: IElection): boolean => {
+        return !election.candidates.some(candidate => candidate.address === connectedUser.value.address);
+      }
+
       const fetchAllElections = async () => {
         elections.value = await pollService.fetchAllElections();
-        console.log({computedElections: computedElections.value});
-
+        for(let i = 0; i < elections.value.length; i++) {
+          elections.value[i].candidates = await pollService.fetchAllCandidates(elections.value[i].id);
+        }
       };
 
       fetchAllElections();
@@ -124,7 +135,8 @@ export default defineComponent({
         columns,
         connectedUserHasVoted,
         electionNextStep,
-        ElectionStateEnum
+        ElectionStateEnum,
+        userIsNotAlreadyCandidate
       };
     }
   })
