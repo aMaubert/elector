@@ -4,13 +4,13 @@ import {
   ElectionState,
   EthereumAddress,
   ICandidate,
-  IElection,
+  IElection, IMedianAndAverageNote,
   IPollService,
   IVote
 } from '@/definitions';
 import {EthereumService} from '@/services/poll/ethereum.service';
 import {mockElections} from '@/services/poll/mock';
-import {candidateCoderService, electionCoderService, votesCoderService} from '@/services/utils';
+import {candidateCoderService, electionCoderService, votesCoderService, medianAndAverageNoteCoderService} from '@/services/utils';
 
 
 let elections = mockElections;
@@ -121,6 +121,35 @@ class PollService extends EthereumService implements IPollService {
     const currentAccount = await this.currentAccount();
     const electionsToDecode = await pollContract.methods.fetchElectionMsgSenderHasVoted().call({from: currentAccount});
     return electionCoderService.decodeList(electionsToDecode);
+  }
+
+  public async fetchMedianAndAverageNotesByElectionId(electionId: number): Promise<IMedianAndAverageNote[]> {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const MedianAndAverageNotesToDecode = await pollContract.methods.fetchMedianCandidates(electionId).call({from: currentAccount});
+    console.log({MedianAndAverageNotesToDecode});
+    return medianAndAverageNoteCoderService.decodeList(MedianAndAverageNotesToDecode);
+
+  }
+
+  public async fetchElectionById(electionId: number): Promise<IElection>  {
+    const pollContract = await PollService.getInstance();
+    const currentAccount = await this.currentAccount();
+    const electionToDecode = await pollContract.methods.fetchElectionByID(electionId).call({from: currentAccount});
+    return electionCoderService.decode(PollService.destructResult(electionToDecode));
+  }
+
+  private static destructResult(result : any): any[] {
+    let fieldCount = 0;
+    while (result[fieldCount] !== undefined) {
+      fieldCount++;
+    }
+    if(fieldCount === 0) throw new Error('How can you parse this ? : ' + result);
+    const object = [];
+    for( let i = 0; i < fieldCount; i++) {
+      object.push(result[i]);
+    }
+    return object;
   }
 
 }

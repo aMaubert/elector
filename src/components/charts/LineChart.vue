@@ -1,7 +1,7 @@
 <template>
-  <div v-if="computeChartDate"
+  <div v-if="computeChartData"
        class="w-full h-full"
-       ref="divChart" />
+       :ref="divChart" />
 </template>
 <script >
 
@@ -17,12 +17,16 @@
       title: {
         type: String,
         default: () => ''
+      },
+      divChart: {
+        type: String,
+        required: true
       }
     },
     computed: {
-      computeChartDate() {
+      computeChartData() {
         if(this.chartData.length > 0) {
-          chart(this.$refs['divChart'], {
+          chart(this.$refs[this.divChart], {
             defaultCultureName: 'fr-FR',
             title: { label: { text: this.title } },
             type: 'column Overflow', //https://jscharting.com/documentation/#node=Home.API.json.Enums.chartType
@@ -32,11 +36,10 @@
                 animation: true,
                 palette: ["#0085f4", "#fE4C14", "#DBCB18", "#15AC20", "#327fa8", "#4832a8", "#8b32a8", "#a83279"]//"autumn"
               }
-            ]
+            ],
           });
         }
         return this.chartData;
-
       }
     }
   }

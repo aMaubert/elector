@@ -1,4 +1,3 @@
-import {Modules as web3} from 'web3';
 
 export interface ICoderService<T> {
   //TODO change any

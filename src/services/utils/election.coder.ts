@@ -6,6 +6,7 @@ class ElectionCoderService extends AbstractCoder<IElection>
                            implements ICoderService<IElection> {
 
   public decode(input: any[]): IElection {
+
     const [id, name, state] = input;
     return {id: parseInt(id,10),name: name, state: electionStateCoderService.decode(state), votes: [], candidates: []} as IElection;
   }
