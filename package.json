@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start" : "node server.js",
     "serve": "gulp && vue-cli-service serve",
     "build": "gulp && vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",

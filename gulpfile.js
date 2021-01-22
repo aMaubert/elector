@@ -1,7 +1,8 @@
 const gulp = require('gulp');
 const dotenv = require('dotenv');
 
-dotenv.config({path: '.env.local'});
+
+dotenv.config({path: '.env'});
 
 gulp.task('copyPollABI', () => {
   return gulp.src(process.env.VUE_APP_POLL_ABI_PATH)
